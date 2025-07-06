@@ -4,6 +4,8 @@ import com.shivam.piechatapp.data.repository.ConversationRepositoryImpl
 import com.shivam.piechatapp.data.repository.PieSocketWebSocketRepository
 import com.shivam.piechatapp.domain.repository.ConversationRepository
 import com.shivam.piechatapp.domain.repository.WebSocketRepository
+import com.shivam.piechatapp.domain.service.messagequeue.MessageQueueService
+import com.shivam.piechatapp.domain.service.messagequeue.MessageQueueServiceImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -25,4 +27,10 @@ abstract class AppModule {
     abstract fun bindConversationRepository(
         conversationRepositoryImpl: ConversationRepositoryImpl
     ): ConversationRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindMessageQueueService(
+        messageQueueServiceImpl: MessageQueueServiceImpl
+    ): MessageQueueService
 } 
