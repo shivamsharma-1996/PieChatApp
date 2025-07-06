@@ -9,6 +9,7 @@ sealed class NetworkAlertState {
     
     data class BackOnline(
         val message: String = "Device is back online",
+        val hasQueuedMessages: Boolean = false
     ) : NetworkAlertState()
     
     data class MessageQueued(
