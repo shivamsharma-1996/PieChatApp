@@ -13,6 +13,7 @@ import org.json.JSONObject
 import java.util.Date
 import java.util.UUID
 import android.util.Log
+import com.shivam.piechatapp.Constants
 import com.shivam.piechatapp.domain.model.ChatMessage
 import com.shivam.piechatapp.domain.model.ConnectionStatus
 import com.shivam.piechatapp.domain.repository.ConversationRepository
@@ -59,18 +60,12 @@ class PieSocketWebSocketRepository @Inject constructor(
             }
 
             options.setPresence(true)
-            options.userId = "androidshivam"
+            options.setNotifySelf(false)
+
+            options.userId = Constants.LOGGED_IN_USER_ID
 
             pieSocket = PieSocket(options)
             channel = pieSocket?.join(ROOM_ID)
-
-       /*     channel!!.listen("new-message", object : PieSocketEventListener() {
-                override fun handleEvent(event: PieSocketEvent) {
-                    Log.d(TAG, "New message received: " + event.getData())
-                    val members = channel!!.allMembers
-                    Log.d(TAG, "members: " + members.toString())
-                }
-            })*/
 
             setupEventListeners()
             
@@ -98,8 +93,8 @@ class PieSocketWebSocketRepository @Inject constructor(
             
             val event = PieSocketEvent("new-message")
             val data = JSONObject().apply {
-                put("user_name", message.userName)
-                put("message", message.message)
+                put(Constants.KEY_SENDER_NAME, message.senderName)
+                put(Constants.KEY_MESSAGE, message.message)
             }
             event.data = data.toString()
             
@@ -121,11 +116,6 @@ class PieSocketWebSocketRepository @Inject constructor(
                     Log.d(TAG, "Connected to PieSocket Room: $event")
 
                     _connectionStatus.value = ConnectionStatus.Connected
-
-                    val newMessage = PieSocketEvent("new-message")
-                    newMessage.setData("Test Message!")
-
-                    ch.publish(newMessage)
                 }
             })
             
@@ -135,16 +125,17 @@ class PieSocketWebSocketRepository @Inject constructor(
                 }
             })
             
-            ch.listen("on_incoming_message", object : PieSocketEventListener() {
+            ch.listen("new-message", object : PieSocketEventListener() {
                 override fun handleEvent(event: PieSocketEvent) {
                     try {
                         val data = JSONObject(event.data)
-                        val userName = data.optString("user_name")
-                        val message = data.optString("message")
+                        val senderName = data.optString(Constants.KEY_SENDER_NAME)
+                        val message = data.optString(Constants.KEY_MESSAGE)
                         
                         val chatMessage = ChatMessage(
                             id = UUID.randomUUID().toString(),
-                            userName = userName,
+                            senderName = senderName,
+                            receiverName = Constants.LOGGED_IN_USER_ID,
                             message = message,
                             timestamp = Date()
                         )

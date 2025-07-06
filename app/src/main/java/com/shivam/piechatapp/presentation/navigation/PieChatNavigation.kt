@@ -5,6 +5,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.shivam.piechatapp.Constants
 import com.shivam.piechatapp.presentation.ui.screens.chat.ChatScreen
 import com.shivam.piechatapp.presentation.ui.screens.convesation.ConversationsScreen
 
@@ -20,13 +21,13 @@ fun PieChatNavigation(
     ) {
         composable(Screen.Conversations.route) {
             ConversationsScreen(
-                onConversationClick = { userName ->
-                    navController.navigate(Screen.Chat.createRoute(userName))
+                onConversationClick = { convoPartnerName ->
+                    navController.navigate(Screen.Chat.createRoute(convoPartnerName))
                 }
             )
         }
         composable(Screen.Chat.route) { backStackEntry ->
-            val userName = backStackEntry.arguments?.getString("userName") ?: "Unknown"
+            val userName = backStackEntry.arguments?.getString(Constants.KEY_CONVO_PARTNER_NAME) ?: "Unknown"
             ChatScreen(
                 userName = userName,
                 onBackClick = { navController.popBackStack() }
