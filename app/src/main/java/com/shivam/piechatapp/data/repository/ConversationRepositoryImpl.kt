@@ -40,7 +40,11 @@ class ConversationRepositoryImpl @Inject constructor() : ConversationRepository 
             val updatedConversation = existingConversation.copy(
                 lastMessage = message.message,
                 lastMessageTimestamp = message.timestamp,
-                unreadCount = existingConversation.unreadCount + 1,
+                unreadCount = if (message.senderName != Constants.LOGGED_IN_USER_ID) {
+                    existingConversation.unreadCount + 1
+                } else {
+                    existingConversation.unreadCount
+                },
                 messages = updatedMessages
             )
 
@@ -50,7 +54,7 @@ class ConversationRepositoryImpl @Inject constructor() : ConversationRepository 
                 partner = conversationPartner,
                 lastMessage = message.message,
                 lastMessageTimestamp = message.timestamp,
-                unreadCount = 1,
+                unreadCount = if (message.senderName != Constants.LOGGED_IN_USER_ID) 1 else 0,
                 messages = listOf(message)
             )
 
@@ -61,8 +65,15 @@ class ConversationRepositoryImpl @Inject constructor() : ConversationRepository 
     }
 
     override fun markConversationAsRead(userName: String) {
-        TODO("Not yet implemented")
+        val currentConversations = _conversations.value.toMutableList()
+        val conversationIndex = currentConversations.indexOfFirst { it.partner == userName }
 
+        if (conversationIndex != -1) {
+            val conversation = currentConversations[conversationIndex]
+            val updatedConversation = conversation.copy(unreadCount = 0)
+            currentConversations[conversationIndex] = updatedConversation
+            _conversations.value = currentConversations
+        }
     }
 
     override fun getMessagesForUser(userName: String): Flow<List<ChatMessage>> {
