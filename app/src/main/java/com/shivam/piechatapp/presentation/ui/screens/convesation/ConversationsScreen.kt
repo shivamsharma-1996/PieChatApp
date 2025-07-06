@@ -4,10 +4,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -27,6 +29,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.shivam.piechatapp.domain.model.ConnectionStatus
 import com.shivam.piechatapp.presentation.ui.components.AppTopBar
 import com.shivam.piechatapp.presentation.ui.components.ConversationItem
+import com.shivam.piechatapp.presentation.ui.components.alerts.network.NetworkAlert
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -35,6 +38,7 @@ fun ConversationsScreen(
     viewModel: ConversationsViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val networkAlertState by viewModel.networkAlertState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(uiState.connectionStatus) {
@@ -66,49 +70,70 @@ fun ConversationsScreen(
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            when {
-                uiState.isLoading -> {
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = androidx.compose.foundation.layout.Arrangement.Center
-                    ) {
-                        CircularProgressIndicator()
-                        androidx.compose.foundation.layout.Spacer(modifier = Modifier.padding(16.dp))
-                        Text(
-                            text = "Making a connection, please wait...",
-                            style = MaterialTheme.typography.bodyLarge,
-                            textAlign = TextAlign.Center
-                        )
-                    }
-                }
-                uiState.conversations.isEmpty() -> {
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = androidx.compose.foundation.layout.Arrangement.Center
-                    ) {
-                        Text(
-                            text = "No conversations available",
-                            style = MaterialTheme.typography.headlineSmall,
-                            textAlign = TextAlign.Center,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                }
-                else -> {
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize(),
-                        contentPadding = PaddingValues(vertical = 8.dp)
-                    ) {
-                        items(uiState.conversations) { conversation ->
-                            ConversationItem(
-                                conversation = conversation,
-                                onClick = {
-                                    viewModel.markConversationAsRead(conversation.partner)
-                                    onConversationClick(conversation.partner)
+            Column(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                // Network Alert at the top
+                NetworkAlert(
+                    alertState = networkAlertState,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Divider()
+
+                Box(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    when {
+                        uiState.isLoading -> {
+                            Column(
+                                modifier = Modifier.fillMaxSize(),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = androidx.compose.foundation.layout.Arrangement.Center
+                            ) {
+                                CircularProgressIndicator()
+                                androidx.compose.foundation.layout.Spacer(
+                                    modifier = Modifier.padding(
+                                        16.dp
+                                    )
+                                )
+                                Text(
+                                    text = "Making a connection, please wait...",
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    textAlign = TextAlign.Center
+                                )
+                            }
+                        }
+
+                        uiState.conversations.isEmpty() -> {
+                            Column(
+                                modifier = Modifier.fillMaxSize(),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = androidx.compose.foundation.layout.Arrangement.Center
+                            ) {
+                                Text(
+                                    text = "No conversations available",
+                                    style = MaterialTheme.typography.headlineSmall,
+                                    textAlign = TextAlign.Center,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                        }
+
+                        else -> {
+                            LazyColumn(
+                                modifier = Modifier.fillMaxSize(),
+                                contentPadding = PaddingValues(vertical = 8.dp)
+                            ) {
+                                items(uiState.conversations) { conversation ->
+                                    ConversationItem(
+                                        conversation = conversation,
+                                        onClick = {
+                                            viewModel.markConversationAsRead(conversation.partner)
+                                            onConversationClick((conversation.partner))
+                                        }
+                                    )
                                 }
-                            )
+                            }
                         }
                     }
                 }

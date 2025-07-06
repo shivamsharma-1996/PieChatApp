@@ -6,6 +6,8 @@ import androidx.lifecycle.viewModelScope
 import com.shivam.piechatapp.domain.model.ConnectionStatus
 import com.shivam.piechatapp.domain.usecase.GetConnectionStatusUseCase
 import com.shivam.piechatapp.domain.usecase.GetConversationsUseCase
+import com.shivam.piechatapp.presentation.ui.components.alerts.network.NetworkAlertManager
+import com.shivam.piechatapp.presentation.ui.components.alerts.network.NetworkAlertState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,10 +19,12 @@ import javax.inject.Inject
 class ConversationsViewModel @Inject constructor(
     private val getConversationsUseCase: GetConversationsUseCase,
     private val getConnectionStatusUseCase: GetConnectionStatusUseCase,
+    networkAlertManager: NetworkAlertManager
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ConversationsUiState())
     val uiState: StateFlow<ConversationsUiState> = _uiState.asStateFlow()
+    val networkAlertState: StateFlow<NetworkAlertState> = networkAlertManager.alertState
 
     init {
         Log.d("ConversationsViewModel", "ViewModel initialized")
