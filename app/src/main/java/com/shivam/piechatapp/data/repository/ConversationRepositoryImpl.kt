@@ -4,21 +4,36 @@ import com.shivam.piechatapp.domain.model.ChatMessage
 import com.shivam.piechatapp.domain.model.Conversation
 import com.shivam.piechatapp.domain.repository.ConversationRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class ConversationRepositoryImpl @Inject constructor() : ConversationRepository {
-    override fun getConversations(): Flow<List<Conversation>> {
-        TODO("Not yet implemented")
-    }
+
+    private val _conversations = MutableStateFlow<List<Conversation>>(emptyList())
+    private val conversationsFlow = _conversations.asStateFlow()
+
+    override fun getConversations(): Flow<List<Conversation>> = conversationsFlow
 
     override fun addMessage(message: ChatMessage) {
-        TODO("Not yet implemented")
+        val currentConversations = _conversations.value.toMutableList()
+
+        val newConversation = Conversation(
+            userName = message.userName,
+            lastMessage = message.message,
+            lastMessageTimestamp = message.timestamp,
+            unreadCount = 1,
+            messages = listOf(message)
+        )
+
+        currentConversations.add(newConversation)
+
+        _conversations.value = currentConversations
     }
 
     override fun markConversationAsRead(userName: String) {
         TODO("Not yet implemented")
     }
-
 }
