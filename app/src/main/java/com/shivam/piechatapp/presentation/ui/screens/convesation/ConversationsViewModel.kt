@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.shivam.piechatapp.domain.model.ConnectionStatus
+import com.shivam.piechatapp.domain.repository.ConversationRepository
 import com.shivam.piechatapp.domain.usecase.GetConnectionStatusUseCase
 import com.shivam.piechatapp.domain.usecase.GetConversationsUseCase
 import com.shivam.piechatapp.presentation.ui.components.alerts.network.NetworkAlertManager
@@ -19,6 +20,7 @@ import javax.inject.Inject
 class ConversationsViewModel @Inject constructor(
     private val getConversationsUseCase: GetConversationsUseCase,
     private val getConnectionStatusUseCase: GetConnectionStatusUseCase,
+    private val conversationRepository: ConversationRepository,
     networkAlertManager: NetworkAlertManager
 ) : ViewModel() {
 
@@ -59,6 +61,6 @@ class ConversationsViewModel @Inject constructor(
     }
 
     fun markConversationAsRead(userName: String) {
-        // TODO
+        conversationRepository.markConversationAsRead(userName)
     }
 }
