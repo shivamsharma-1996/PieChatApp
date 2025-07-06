@@ -25,6 +25,9 @@ class NetworkMonitor @Inject constructor(
         CoroutineScope(Dispatchers.IO).launch {
             networkStatusManager.networkStatusFlow.collectLatest { isOnline ->
                 if (isOnline) {
+                    // First invalidate the socket if it's in reconnection state
+                    socketRepository.disconnect()
+
                     // Reconnect PieSocket when back online
                     socketRepository.connect()
                 }
