@@ -1,6 +1,6 @@
 package com.shivam.piechatapp.domain.service.messagequeue
 
-import com.shivam.piechatapp.data.manager.MessageQueue
+import com.shivam.piechatapp.data.messagequeue.MessageQueue
 import com.shivam.piechatapp.data.repository.PieSocketWebSocketRepository
 import com.shivam.piechatapp.domain.model.ChatMessage
 import javax.inject.Inject

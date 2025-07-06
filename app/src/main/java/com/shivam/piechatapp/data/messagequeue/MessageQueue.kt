@@ -1,4 +1,4 @@
-package com.shivam.piechatapp.data.manager
+package com.shivam.piechatapp.data.messagequeue
 
 import com.shivam.piechatapp.domain.model.ChatMessage
 import com.shivam.piechatapp.domain.model.MessageStatus
