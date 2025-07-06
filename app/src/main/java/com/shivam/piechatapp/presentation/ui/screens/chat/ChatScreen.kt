@@ -94,7 +94,10 @@ fun ChatScreen(
                     )
                     Spacer(modifier = Modifier.padding(4.dp))
                     Button(
-                        onClick = { /* TODO: send message */ },
+                        onClick = {
+                            viewModel.sendMessage(message)
+                            setMessage("")
+                        },
                         enabled = message.isNotBlank()
                     ) {
                         Text("Send")
