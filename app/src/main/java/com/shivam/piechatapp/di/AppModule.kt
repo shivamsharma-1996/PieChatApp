@@ -1,6 +1,8 @@
 package com.shivam.piechatapp.di
 
+import com.shivam.piechatapp.data.repository.ConversationRepositoryImpl
 import com.shivam.piechatapp.data.repository.PieSocketWebSocketRepository
+import com.shivam.piechatapp.domain.repository.ConversationRepository
 import com.shivam.piechatapp.domain.repository.WebSocketRepository
 import dagger.Binds
 import dagger.Module
@@ -17,4 +19,10 @@ abstract class AppModule {
     abstract fun bindWebSocketRepository(
         pieSocketWebSocketRepository: PieSocketWebSocketRepository
     ): WebSocketRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindConversationRepository(
+        conversationRepositoryImpl: ConversationRepositoryImpl
+    ): ConversationRepository
 } 
