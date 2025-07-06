@@ -105,6 +105,7 @@ fun ConversationsScreen(
                             ConversationItem(
                                 conversation = conversation,
                                 onClick = {
+                                    viewModel.markConversationAsRead(conversation.userName)
                                     onConversationClick(conversation.userName)
                                 }
                             )

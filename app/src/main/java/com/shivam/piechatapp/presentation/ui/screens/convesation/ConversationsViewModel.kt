@@ -61,4 +61,8 @@ class ConversationsViewModel @Inject constructor(
         Log.d(TAG, "Connecting to WebSocket...")
         connectWebSocketUseCase()
     }
+
+    fun markConversationAsRead(userName: String) {
+        // TODO
+    }
 }
