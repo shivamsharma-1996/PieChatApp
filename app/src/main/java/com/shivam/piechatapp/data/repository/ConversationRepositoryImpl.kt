@@ -57,6 +57,6 @@ class ConversationRepositoryImpl @Inject constructor() : ConversationRepository 
     }
 
     override fun getMessagesForUser(userName: String): List<ChatMessage> {
-        return listOf()
+        return _conversations.value.firstOrNull { it.userName == userName }?.messages ?: emptyList()
     }
 }
