@@ -21,17 +21,34 @@ class NetworkStatusManager @Inject constructor(
     private val _networkStatusFlow = MutableStateFlow(isNetworkAvailable())
     val networkStatusFlow: StateFlow<Boolean> = _networkStatusFlow.asStateFlow()
 
+    private val networkCallback = object : ConnectivityManager.NetworkCallback() {
+        override fun onAvailable(network: Network) {
+            _networkStatusFlow.value = true
+        }
+
+        override fun onLost(network: Network) {
+            _networkStatusFlow.value = false
+        }
+    }
+
     fun startNetworkMonitoring() {
-        // TODO
+        val request = NetworkRequest.Builder()
+            .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+            .build()
+        connectivityManager.registerNetworkCallback(request, networkCallback)
     }
 
     fun stopNetworkMonitoring() {
-       // TODO
+        connectivityManager.unregisterNetworkCallback(networkCallback)
     }
 
     private fun isNetworkAvailable(): Boolean {
         val activeNetwork = connectivityManager.activeNetwork
         val networkCapabilities = connectivityManager.getNetworkCapabilities(activeNetwork)
         return networkCapabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true
+    }
+
+    fun isNetworkAvailableNow(): Boolean {
+        return _networkStatusFlow.value
     }
 }
