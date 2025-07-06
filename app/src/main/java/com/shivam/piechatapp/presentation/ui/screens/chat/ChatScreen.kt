@@ -26,20 +26,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.shivam.piechatapp.presentation.ui.components.AppTopBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatScreen(
     userName: String,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    viewModel: ChatViewModel = hiltViewModel()
 ) {
     val (message, setMessage) = remember { mutableStateOf("") }
-    val staticMessages = listOf(
-        "Hello! Message 1",
-        "Hello! Message 2",
-        "Hello! Message 3",
-    )
+    val messages = viewModel.messages
 
     Scaffold(
         topBar = {
@@ -72,9 +70,9 @@ fun ChatScreen(
                         .fillMaxWidth()
                         .padding(8.dp)
                 ) {
-                    items(staticMessages) { msg ->
+                    items(messages) { msg ->
                         Text(
-                            text = msg,
+                            text = msg.message,
                             style = MaterialTheme.typography.bodyLarge,
                             modifier = Modifier.padding(vertical = 4.dp)
                         )

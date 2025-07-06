@@ -55,4 +55,8 @@ class ConversationRepositoryImpl @Inject constructor() : ConversationRepository 
         TODO("Not yet implemented")
 
     }
+
+    override fun getMessagesForUser(userName: String): List<ChatMessage> {
+        return listOf()
+    }
 }
