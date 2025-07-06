@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <style name="Theme.PieChatApp" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="Theme.PieChatApp" parent="Theme.Material3.Light.NoActionBar">
+        <!-- Add your custom colors if needed -->
+        <item name="colorPrimary">#e0e0e0</item>
+        <item name="colorOnPrimary">#1328BA</item>
+        <item name="colorSecondary">#3e4e44</item>
+        <item name="colorOnSecondary">#18BF57</item>
+    </style>
 </resources>

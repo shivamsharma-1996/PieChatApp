@@ -12,7 +12,7 @@ android {
 
     defaultConfig {
         applicationId = "com.shivam.piechatapp"
-        minSdk = 24
+        minSdk = 27
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
@@ -56,6 +56,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.material)
 
     // Navigation Compose
     implementation(libs.androidx.navigation.compose)
@@ -70,6 +71,9 @@ dependencies {
 
     // Coroutines
     implementation(libs.kotlinx.coroutines.android)
+
+    // PieSocket WebSocket SDK
+    implementation(libs.piesocket.channels)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
