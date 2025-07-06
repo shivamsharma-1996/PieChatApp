@@ -3,13 +3,16 @@ package com.shivam.piechatapp.domain.service.messagequeue
 import com.shivam.piechatapp.data.messagequeue.MessageQueue
 import com.shivam.piechatapp.data.repository.PieSocketWebSocketRepository
 import com.shivam.piechatapp.domain.model.ChatMessage
+import com.shivam.piechatapp.domain.model.MessageStatus
+import com.shivam.piechatapp.domain.repository.ConversationRepository
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class MessageQueueServiceImpl @Inject constructor(
     private val messageQueue: MessageQueue,
-    private val socketRepository: PieSocketWebSocketRepository
+    private val socketRepository: PieSocketWebSocketRepository,
+    private val conversationRepository: ConversationRepository
 ) : MessageQueueService {
 
     override fun queueMessage(message: ChatMessage) {
@@ -21,14 +24,11 @@ class MessageQueueServiceImpl @Inject constructor(
         while (messageQueue.hasQueuedMessages() && shouldContinue) {
             val message = messageQueue.dequeue()
             message?.let {
-                // Try to send the queued message
-                val result = socketRepository.sendMessage(it)
+                val result = socketRepository.sendMessage(it) // Try to send the queued message
                 if (result.isSuccess) {
-                    // Message sent successfully, update status to SENT
-                    // TODO - update the message status in the repository
+                    conversationRepository.updateMessageStatus(it.id, MessageStatus.SENT)
                 } else {
-                    // If sending fails, put it back in the queue and stop processing
-                    messageQueue.enqueue(it)
+                    messageQueue.enqueue(it)  // put it back in the queue and stop processing
                     shouldContinue = false
                 }
             }

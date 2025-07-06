@@ -3,6 +3,7 @@ package com.shivam.piechatapp.data.repository
 import com.shivam.piechatapp.Constants
 import com.shivam.piechatapp.domain.model.ChatMessage
 import com.shivam.piechatapp.domain.model.Conversation
+import com.shivam.piechatapp.domain.model.MessageStatus
 import com.shivam.piechatapp.domain.repository.ConversationRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -68,5 +69,27 @@ class ConversationRepositoryImpl @Inject constructor() : ConversationRepository 
         return conversationsFlow.map { conversations ->
             conversations.firstOrNull { it.partner == userName }?.messages ?: emptyList()
         }
+    }
+
+    override fun updateMessageStatus(messageId: String, newStatus: MessageStatus) {
+        val currentConversations = _conversations.value.toMutableList()
+
+        for (conversationIndex in currentConversations.indices) {
+            val conversation = currentConversations[conversationIndex]
+            val messageIndex = conversation.messages.indexOfFirst { it.id == messageId }
+
+            if (messageIndex != -1) {
+                val message = conversation.messages[messageIndex]
+                val updatedMessage = message.copy(status = newStatus)
+                val updatedMessages = conversation.messages.toMutableList()
+                updatedMessages[messageIndex] = updatedMessage
+
+                val updatedConversation = conversation.copy(messages = updatedMessages)
+                currentConversations[conversationIndex] = updatedConversation
+                break
+            }
+        }
+
+        _conversations.value = currentConversations
     }
 }
