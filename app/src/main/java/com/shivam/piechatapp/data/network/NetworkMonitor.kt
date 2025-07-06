@@ -4,6 +4,7 @@ import android.util.Log
 import com.shivam.piechatapp.data.handler.MessageHandler
 import com.shivam.piechatapp.data.repository.PieSocketWebSocketRepository
 import com.shivam.piechatapp.domain.model.ConnectionStatus
+import com.shivam.piechatapp.presentation.ui.components.alerts.network.NetworkAlertManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
@@ -16,39 +17,53 @@ import javax.inject.Singleton
 class NetworkMonitor @Inject constructor(
     private val networkStatusManager: NetworkStatusManager,
     private val messageHandler: MessageHandler,
-    private val socketRepository: PieSocketWebSocketRepository
+    private val socketRepository: PieSocketWebSocketRepository,
+    private val networkAlertManager: NetworkAlertManager
 ) {
+    private val scope = CoroutineScope(Dispatchers.IO)
+    private var isFirstStatusCheck = true
 
     fun startMonitoring() {
         networkStatusManager.startNetworkMonitoring()
+        observeNetworkStatus()
+        observeSocketStatus()
+    }
 
-        // Observe network status changes
-        CoroutineScope(Dispatchers.IO).launch {
-            networkStatusManager.networkStatusFlow.collectLatest { isOnline ->
-                if (isOnline) {
-                    // First invalidate the socket if it's in reconnection state
-                    socketRepository.disconnect()
+    fun stopMonitoring() {
+        networkStatusManager.stopNetworkMonitoring()
+    }
 
-                    // Reconnect PieSocket when back online
-                    socketRepository.connect()
-                }
+    private fun observeNetworkStatus() = scope.launch {
+        networkStatusManager.networkStatusFlow.collectLatest { isOnline ->
+            if (isOnline) handleOnlineStatus()
+            else handleOfflineStatus()
+        }
+    }
+
+    private fun observeSocketStatus() = scope.launch {
+        socketRepository.getConnectionStatus().collectLatest { status ->
+            if (status == ConnectionStatus.Connected && messageHandler.hasQueuedMessages()) {
+                Log.d("PieSocketWebSocketRepository", "Socket connected - processing queued messages")
+                messageHandler.processQueuedMessages()
             }
         }
+    }
 
-        // Observe socket connection status changes
-        CoroutineScope(Dispatchers.IO).launch {
-            socketRepository.getConnectionStatus().collectLatest { status ->
-                if (status == ConnectionStatus.Connected && messageHandler.hasQueuedMessages()) {
-                    Log.d("PieSocketWebSocketRepository", "Socket connected - ready to process queued messages")
-
-                    // Process queued messages when socket connects
-                    messageHandler.processQueuedMessages()
-                }
+    private fun handleOnlineStatus() {
+        if (!isFirstStatusCheck) {
+            networkAlertManager.hideAlert {
+                networkAlertManager.showBackOnlineAlert(messageHandler.hasQueuedMessages())
+                networkAlertManager.clearAlertAfterDelay()
             }
         }
+        isFirstStatusCheck = false
 
-        fun stopMonitoring() {
-            networkStatusManager.stopNetworkMonitoring()
-        }
+        socketRepository.disconnect()
+        socketRepository.connect()
+    }
+
+    private fun handleOfflineStatus() {
+        if (isFirstStatusCheck) isFirstStatusCheck = false
+        networkAlertManager.showNoInternetAlert()
     }
 }

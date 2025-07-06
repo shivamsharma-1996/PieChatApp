@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -30,6 +31,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.shivam.piechatapp.presentation.ui.components.AppTopBar
 import com.shivam.piechatapp.presentation.ui.components.ChatMessageItem
+import com.shivam.piechatapp.presentation.ui.components.alerts.network.NetworkAlert
+import com.shivam.piechatapp.presentation.ui.components.alerts.network.NetworkAlertState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,6 +43,7 @@ fun ChatScreen(
 ) {
     val (message, setMessage) = remember { mutableStateOf("") }
     val messages by viewModel.messages.collectAsState(emptyList())
+    val networkAlertState by viewModel.networkAlertState.collectAsState(NetworkAlertState.Hidden)
 
     Scaffold(
         topBar = {
@@ -66,6 +70,13 @@ fun ChatScreen(
                 modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.Bottom
             ) {
+                NetworkAlert(
+                    alertState = networkAlertState,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Divider()
+
                 LazyColumn(
                     modifier = Modifier
                         .weight(1f)
