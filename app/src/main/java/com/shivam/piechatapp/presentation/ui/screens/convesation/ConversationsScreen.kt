@@ -105,6 +105,7 @@ fun ConversationsScreen(
                             ConversationItem(
                                 conversation = conversation,
                                 onClick = {
+                                    onConversationClick(conversation.userName)
                                 }
                             )
                         }
