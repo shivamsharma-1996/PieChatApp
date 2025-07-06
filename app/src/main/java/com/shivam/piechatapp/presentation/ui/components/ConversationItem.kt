@@ -25,6 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.shivam.piechatapp.domain.model.Conversation
+import com.shivam.utils.format
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -86,7 +87,7 @@ fun ConversationItem(
                     )
                     
                     Text(
-                        text = formatTimestamp(conversation.lastMessageTimestamp),
+                        text = conversation.lastMessageTimestamp.format(),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -128,8 +129,4 @@ fun ConversationItem(
             }
         }
     }
-}
-
-private fun formatTimestamp(timestamp: Date): String {
-    return SimpleDateFormat("MMM dd, hh:mm a", Locale.getDefault()).format(timestamp)
 }
