@@ -19,9 +19,13 @@ class NetworkAlertManager @Inject constructor() {
         _alertState.value = NetworkAlertState.NoInternet()
     }
 
-    fun showBackOnlineAlert(hasQueuedMessages: Boolean) {
+    fun showBackOnlineAlert(hasQueuedMessages: Boolean, queueMode: Boolean) {
         val message = if (hasQueuedMessages) {
-            "Device is back online, sending queued messages"
+             if (queueMode) {
+                 "Device is back online, turn off the Queue mode to send the queued msgs!"
+             } else {
+                 "Device is back online, sending queued messages!"
+             }
         } else {
             "Device is back online"
         }
