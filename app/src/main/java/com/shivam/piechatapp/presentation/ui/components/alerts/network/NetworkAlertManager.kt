@@ -1,14 +1,11 @@
 package com.shivam.piechatapp.presentation.ui.components.alerts.network
 
-import android.R.attr.delay
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.time.delay
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -22,15 +19,29 @@ class NetworkAlertManager @Inject constructor() {
         _alertState.value = NetworkAlertState.NoInternet()
     }
 
-    fun showBackOnlineAlert() {
-        _alertState.value = NetworkAlertState.BackOnline()
+    fun showBackOnlineAlert(hasQueuedMessages: Boolean) {
+        val message = if (hasQueuedMessages) {
+            "Device is back online, sending queued messages"
+        } else {
+            "Device is back online"
+        }
+        _alertState.value = NetworkAlertState.BackOnline(message, hasQueuedMessages)
     }
 
     fun showMessageQueuedAlert() {
         _alertState.value = NetworkAlertState.MessageQueued()
     }
 
-    fun hideAlert() {
+    fun hideAlert(onHide: (() -> Unit)? = null) {
         _alertState.value = NetworkAlertState.Hidden
+        onHide?.invoke()
+    }
+
+    fun clearAlertAfterDelay(delayMillis: Long = 3000, onCleared: (() -> Unit)? = null) {
+        CoroutineScope(Dispatchers.Main).launch {
+            kotlinx.coroutines.delay(delayMillis)
+            hideAlert()
+            onCleared?.invoke()
+        }
     }
 } 
