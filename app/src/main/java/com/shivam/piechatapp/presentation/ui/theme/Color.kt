@@ -1,4 +1,4 @@
-package com.shivam.piechatapp.ui.theme
+package com.shivam.piechatapp.presentation.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
