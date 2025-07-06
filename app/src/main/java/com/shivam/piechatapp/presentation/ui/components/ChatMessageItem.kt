@@ -24,7 +24,7 @@ fun ChatMessageItem(
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = if (isLocal) androidx.compose.foundation.layout.Arrangement.End else androidx.compose.foundation.layout.Arrangement.Start
+        horizontalArrangement = if (isLocal) Arrangement.End else Arrangement.Start
     ) {
         Column(
             horizontalAlignment = if (isLocal) Alignment.End else Alignment.Start
