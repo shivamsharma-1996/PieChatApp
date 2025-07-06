@@ -40,7 +40,11 @@ class ConversationRepositoryImpl @Inject constructor() : ConversationRepository 
             val updatedConversation = existingConversation.copy(
                 lastMessage = message.message,
                 lastMessageTimestamp = message.timestamp,
-                unreadCount = existingConversation.unreadCount + 1,
+                unreadCount = if (message.senderName != Constants.LOGGED_IN_USER_ID) {
+                    existingConversation.unreadCount + 1
+                } else {
+                    existingConversation.unreadCount
+                },
                 messages = updatedMessages
             )
 
@@ -50,7 +54,7 @@ class ConversationRepositoryImpl @Inject constructor() : ConversationRepository 
                 partner = conversationPartner,
                 lastMessage = message.message,
                 lastMessageTimestamp = message.timestamp,
-                unreadCount = 1,
+                unreadCount = if (message.senderName != Constants.LOGGED_IN_USER_ID) 1 else 0,
                 messages = listOf(message)
             )
 
