@@ -6,6 +6,7 @@ import com.shivam.piechatapp.domain.repository.ConversationRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -54,5 +55,11 @@ class ConversationRepositoryImpl @Inject constructor() : ConversationRepository 
     override fun markConversationAsRead(userName: String) {
         TODO("Not yet implemented")
 
+    }
+
+    override fun getMessagesForUser(userName: String): Flow<List<ChatMessage>> {
+        return conversationsFlow.map { conversations ->
+            conversations.firstOrNull { it.userName == userName }?.messages ?: emptyList()
+        }
     }
 }
