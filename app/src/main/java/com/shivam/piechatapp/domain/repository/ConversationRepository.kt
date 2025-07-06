@@ -8,5 +8,5 @@ interface ConversationRepository {
     fun getConversations(): Flow<List<Conversation>>
     fun addMessage(message: ChatMessage)
     fun markConversationAsRead(userName: String)
-    fun getMessagesForUser(userName: String): List<ChatMessage>
+    fun getMessagesForUser(userName: String): Flow<List<ChatMessage>>
 }
