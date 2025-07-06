@@ -50,7 +50,6 @@ fun ConversationItem(
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Avatar
             Box(
                 modifier = Modifier
                     .size(48.dp)
@@ -68,7 +67,6 @@ fun ConversationItem(
             
             Spacer(modifier = Modifier.padding(12.dp))
             
-            // Content
             Column(
                 modifier = Modifier.weight(1f)
             ) {
@@ -118,7 +116,7 @@ fun ConversationItem(
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text = if (conversation.unreadCount > 99) "99+" else conversation.unreadCount.toString(),
+                                text = conversation.unreadCount.toString(),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = MaterialTheme.colorScheme.onPrimary,
                                 fontWeight = FontWeight.Bold
