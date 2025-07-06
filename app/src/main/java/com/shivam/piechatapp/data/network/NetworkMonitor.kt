@@ -1,5 +1,6 @@
 package com.shivam.piechatapp.data.network
 
+import android.util.Log
 import com.shivam.piechatapp.data.handler.MessageHandler
 import com.shivam.piechatapp.data.repository.PieSocketWebSocketRepository
 import com.shivam.piechatapp.domain.model.ConnectionStatus
@@ -38,6 +39,8 @@ class NetworkMonitor @Inject constructor(
         CoroutineScope(Dispatchers.IO).launch {
             socketRepository.getConnectionStatus().collectLatest { status ->
                 if (status == ConnectionStatus.Connected && messageHandler.hasQueuedMessages()) {
+                    Log.d("PieSocketWebSocketRepository", "Socket connected - ready to process queued messages")
+
                     // Process queued messages when socket connects
                     messageHandler.processQueuedMessages()
                 }
