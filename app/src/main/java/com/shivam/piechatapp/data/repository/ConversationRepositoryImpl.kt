@@ -61,8 +61,15 @@ class ConversationRepositoryImpl @Inject constructor() : ConversationRepository 
     }
 
     override fun markConversationAsRead(userName: String) {
-        TODO("Not yet implemented")
+        val currentConversations = _conversations.value.toMutableList()
+        val conversationIndex = currentConversations.indexOfFirst { it.partner == userName }
 
+        if (conversationIndex != -1) {
+            val conversation = currentConversations[conversationIndex]
+            val updatedConversation = conversation.copy(unreadCount = 0)
+            currentConversations[conversationIndex] = updatedConversation
+            _conversations.value = currentConversations
+        }
     }
 
     override fun getMessagesForUser(userName: String): Flow<List<ChatMessage>> {
