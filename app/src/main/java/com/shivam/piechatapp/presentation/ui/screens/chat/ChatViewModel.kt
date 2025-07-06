@@ -2,12 +2,14 @@ package com.shivam.piechatapp.presentation.ui.screens.chat
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.shivam.piechatapp.Constants
 import com.shivam.piechatapp.domain.model.ChatMessage
 import com.shivam.piechatapp.domain.repository.ConversationRepository
 import com.shivam.piechatapp.domain.usecase.SendMessageUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 import java.util.Date
 import java.util.UUID
 import javax.inject.Inject
@@ -31,6 +33,8 @@ class ChatViewModel @Inject constructor(
             isRead = true
         )
 
-        sendMessageUseCase(message)
+        viewModelScope.launch {
+            sendMessageUseCase(message)
+        }
     }
 }

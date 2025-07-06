@@ -131,7 +131,12 @@ class PieSocketWebSocketRepository @Inject constructor(
                         val data = JSONObject(event.data)
                         val senderName = data.optString(Constants.KEY_SENDER_NAME)
                         val message = data.optString(Constants.KEY_MESSAGE)
-                        
+
+                        if (senderName == Constants.LOGGED_IN_USER_ID) {
+                            // skip the message and sender and receiver's username can't be same
+                            return;
+                        }
+
                         val chatMessage = ChatMessage(
                             id = UUID.randomUUID().toString(),
                             senderName = senderName,

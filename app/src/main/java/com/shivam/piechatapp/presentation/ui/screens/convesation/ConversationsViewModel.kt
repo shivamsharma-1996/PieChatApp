@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.shivam.piechatapp.domain.model.ConnectionStatus
-import com.shivam.piechatapp.domain.usecase.ConnectWebSocketUseCase
 import com.shivam.piechatapp.domain.usecase.GetConnectionStatusUseCase
 import com.shivam.piechatapp.domain.usecase.GetConversationsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,7 +16,6 @@ import javax.inject.Inject
 @HiltViewModel
 class ConversationsViewModel @Inject constructor(
     private val getConversationsUseCase: GetConversationsUseCase,
-    private val connectWebSocketUseCase: ConnectWebSocketUseCase,
     private val getConnectionStatusUseCase: GetConnectionStatusUseCase,
 ) : ViewModel() {
 
@@ -28,7 +26,6 @@ class ConversationsViewModel @Inject constructor(
         Log.d("ConversationsViewModel", "ViewModel initialized")
         observeConversations()
         observeConnectionStatus()
-        connectSocket()
     }
 
     companion object {
@@ -55,11 +52,6 @@ class ConversationsViewModel @Inject constructor(
                 )
             }
         }
-    }
-
-    private fun connectSocket() {
-        Log.d(TAG, "Connecting to WebSocket...")
-        connectWebSocketUseCase()
     }
 
     fun markConversationAsRead(userName: String) {

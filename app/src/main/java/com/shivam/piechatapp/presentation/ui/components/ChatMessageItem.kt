@@ -1,6 +1,7 @@
 package com.shivam.piechatapp.presentation.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,8 +14,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.shivam.piechatapp.domain.model.ChatMessage
-import java.text.SimpleDateFormat
-import java.util.Locale
+import com.shivam.piechatapp.domain.model.MessageStatus
+import com.shivam.utils.format
 
 @Composable
 fun ChatMessageItem(
@@ -23,7 +24,7 @@ fun ChatMessageItem(
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = if (isLocal) androidx.compose.foundation.layout.Arrangement.End else androidx.compose.foundation.layout.Arrangement.Start
+        horizontalArrangement = if (isLocal) Arrangement.End else Arrangement.Start
     ) {
         Column(
             horizontalAlignment = if (isLocal) Alignment.End else Alignment.Start
@@ -38,17 +39,25 @@ fun ChatMessageItem(
                     .padding(12.dp),
                 color = if (isLocal) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
             )
-            Text(
-                text = formatTimestamp(message.timestamp),
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(top = 2.dp, end = 4.dp, start = 4.dp)
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = if (isLocal) Arrangement.End else Arrangement.Start
+            ) {
+                Text(
+                    text = message.timestamp.format("hh:mm a"),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(top = 2.dp, end = 4.dp, start = 4.dp)
+                )
+                if (isLocal && message.status == MessageStatus.QUEUED) {
+                    Text(
+                        text = "Queued",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.padding(top = 2.dp, end = 4.dp, start = 4.dp)
+                    )
+                }
+            }
         }
     }
 }
-
-private fun formatTimestamp(timestamp: java.util.Date): String {
-    val sdf = SimpleDateFormat("hh:mm a", Locale.getDefault())
-    return sdf.format(timestamp)
-} 
