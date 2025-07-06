@@ -118,10 +118,12 @@ class PieSocketWebSocketRepository @Inject constructor(
         channel?.let { ch ->
             ch.listen("system:connected", object : PieSocketEventListener() {
                 override fun handleEvent(event: PieSocketEvent) {
+                    Log.d(TAG, "Connected to PieSocket Room: $event")
+
                     _connectionStatus.value = ConnectionStatus.Connected
 
                     val newMessage = PieSocketEvent("new-message")
-                    newMessage.setData("Hello!")
+                    newMessage.setData("Test Message!")
 
                     ch.publish(newMessage)
                 }
