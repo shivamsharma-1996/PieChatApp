@@ -59,7 +59,7 @@ fun NetworkAlert(
                 message = alertState.message,
                 backgroundColor = MaterialTheme.colorScheme.error,
                 textColor = MaterialTheme.colorScheme.onError,
-                painter = R.drawable.ic_message_queue,
+                painter = R.drawable.ic_msg_queued,
                 modifier = modifier
             )
         }
