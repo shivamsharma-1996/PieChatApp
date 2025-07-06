@@ -58,7 +58,7 @@ fun ConversationItem(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = conversation.userName.firstOrNull()?.uppercase() ?: "?",
+                    text = conversation.partner.firstOrNull()?.uppercase() ?: "?",
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onPrimary,
                     fontWeight = FontWeight.Bold
@@ -77,7 +77,7 @@ fun ConversationItem(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = conversation.userName,
+                        text = conversation.partner,
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.SemiBold,
                         maxLines = 1,

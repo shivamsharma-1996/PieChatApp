@@ -16,7 +16,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -30,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.shivam.piechatapp.presentation.ui.components.AppTopBar
+import com.shivam.piechatapp.presentation.ui.components.ChatMessageItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -73,10 +73,9 @@ fun ChatScreen(
                         .padding(8.dp)
                 ) {
                     items(messages) { msg ->
-                        Text(
-                            text = msg.message,
-                            style = MaterialTheme.typography.bodyLarge,
-                            modifier = Modifier.padding(vertical = 4.dp)
+                        ChatMessageItem(
+                            message = msg,
+                            isLocal = msg.senderName != viewModel.conversationPartnerName
                         )
                     }
                 }

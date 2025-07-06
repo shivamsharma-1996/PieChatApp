@@ -1,5 +1,6 @@
 package com.shivam.piechatapp.data.repository
 
+import com.shivam.piechatapp.Constants
 import com.shivam.piechatapp.domain.model.ChatMessage
 import com.shivam.piechatapp.domain.model.Conversation
 import com.shivam.piechatapp.domain.repository.ConversationRepository
@@ -21,8 +22,14 @@ class ConversationRepositoryImpl @Inject constructor() : ConversationRepository 
     override fun addMessage(message: ChatMessage) {
         val currentConversations = _conversations.value.toMutableList()
 
+        val conversationPartner = if (message.senderName == Constants.LOGGED_IN_USER_ID) {
+            message.receiverName
+        } else {
+            message.senderName
+        }
+
         val existingConversationIndex = currentConversations.indexOfFirst {
-            it.userName == message.userName
+            it.partner == conversationPartner
         }
 
         if (existingConversationIndex != -1) {
@@ -39,7 +46,7 @@ class ConversationRepositoryImpl @Inject constructor() : ConversationRepository 
             currentConversations[existingConversationIndex] = updatedConversation
         } else {
             val newConversation = Conversation(
-                userName = message.userName,
+                partner = conversationPartner,
                 lastMessage = message.message,
                 lastMessageTimestamp = message.timestamp,
                 unreadCount = 1,
@@ -59,7 +66,7 @@ class ConversationRepositoryImpl @Inject constructor() : ConversationRepository 
 
     override fun getMessagesForUser(userName: String): Flow<List<ChatMessage>> {
         return conversationsFlow.map { conversations ->
-            conversations.firstOrNull { it.userName == userName }?.messages ?: emptyList()
+            conversations.firstOrNull { it.partner == userName }?.messages ?: emptyList()
         }
     }
 }
