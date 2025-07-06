@@ -1,5 +1,6 @@
 package com.shivam.piechatapp.data.handler
 
+import com.shivam.piechatapp.data.manager.QueueSimulationManager
 import com.shivam.piechatapp.data.network.NetworkStatusManager
 import com.shivam.piechatapp.data.repository.PieSocketWebSocketRepository
 import com.shivam.piechatapp.domain.model.ChatMessage
@@ -14,14 +15,27 @@ class MessageHandler @Inject constructor(
     private val networkStatusManager: NetworkStatusManager,
     private val socketRepository: PieSocketWebSocketRepository,
     private val messageQueueService: MessageQueueService,
-    private val networkAlertManager: NetworkAlertManager
+    private val networkAlertManager: NetworkAlertManager,
+    private val queueSimulationManager: QueueSimulationManager
 ) {
     
     fun sendMessage(message: ChatMessage): ChatMessage {
+        val queueMode = queueSimulationManager.queueMode.value
+
         // Check both internet connectivity and socket connection
         val canSend = networkStatusManager.isNetworkAvailableNow() && socketRepository.isConnected()
-        
-        return if (canSend) {
+
+        return if (queueMode) {
+            // Always queue in simulation mode
+            messageQueueService.queueMessage(message)
+            networkAlertManager.showMessageQueuedAlert()
+            networkAlertManager.clearAlertAfterDelay(3000) {
+                if (!networkStatusManager.isNetworkAvailableNow()) {
+                    networkAlertManager.showNoInternetAlert()
+                }
+            }
+            message.copy(status = MessageStatus.QUEUED)
+        } else if (canSend) {
             val result = socketRepository.sendMessage(message) // Try to send immediately
             if (result.isSuccess) {
                 message.copy(status = MessageStatus.SENT)
@@ -44,7 +58,8 @@ class MessageHandler @Inject constructor(
     }
     
     fun processQueuedMessages() {
-        if (networkStatusManager.isNetworkAvailableNow() && socketRepository.isConnected()) {
+        val queueMode = queueSimulationManager.queueMode.value
+        if (!queueMode && networkStatusManager.isNetworkAvailableNow() && socketRepository.isConnected()) {
             messageQueueService.processQueue()
         }
     }

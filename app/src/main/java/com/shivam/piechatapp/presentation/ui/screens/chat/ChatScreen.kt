@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.shivam.piechatapp.presentation.ui.components.AppTopBar
 import com.shivam.piechatapp.presentation.ui.components.ChatMessageItem
+import com.shivam.piechatapp.presentation.ui.components.QueueModeToggle
 import com.shivam.piechatapp.presentation.ui.components.alerts.network.NetworkAlert
 import com.shivam.piechatapp.presentation.ui.components.alerts.network.NetworkAlertState
 
@@ -44,6 +45,7 @@ fun ChatScreen(
     val (message, setMessage) = remember { mutableStateOf("") }
     val messages by viewModel.messages.collectAsState(emptyList())
     val networkAlertState by viewModel.networkAlertState.collectAsState(NetworkAlertState.Hidden)
+    val queueMode by viewModel.queueMode.collectAsState()
 
     Scaffold(
         topBar = {
@@ -113,6 +115,10 @@ fun ChatScreen(
                         Text("Send")
                     }
                 }
+                QueueModeToggle(
+                    isQueueModeEnabled = queueMode,
+                    onToggle = { viewModel.setQueueMode(it) }
+                )
             }
         }
     }
