@@ -1,4 +1,4 @@
-package com.shivam.piechatapp.data.manager
+package com.shivam.piechatapp.data.network
 
 import android.content.Context
 import android.net.ConnectivityManager
