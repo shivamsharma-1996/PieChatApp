@@ -14,6 +14,7 @@ import java.util.Date
 import java.util.UUID
 import android.util.Log
 import com.shivam.piechatapp.domain.model.ChatMessage
+import com.shivam.piechatapp.domain.model.ConnectionStatus
 import com.shivam.piechatapp.domain.repository.ConversationRepository
 import com.shivam.piechatapp.domain.repository.WebSocketRepository
 import javax.inject.Inject
@@ -30,8 +31,10 @@ class PieSocketWebSocketRepository @Inject constructor(
     private var pieSocket: PieSocket? = null
     private var channel: Channel? = null
 
+    private val _connectionStatus = MutableStateFlow<ConnectionStatus>(ConnectionStatus.Disconnected)
     private val _messages = MutableStateFlow<List<ChatMessage>>(emptyList())
 
+    private val connectionStatusFlow: StateFlow<ConnectionStatus> = _connectionStatus.asStateFlow()
     private val messagesFlow: StateFlow<List<ChatMessage>> = _messages.asStateFlow()
     
     companion object {
@@ -41,11 +44,15 @@ class PieSocketWebSocketRepository @Inject constructor(
         private const val ROOM_ID = "chat-shivam"
     }
 
+    override fun getConnectionStatus(): Flow<ConnectionStatus> = connectionStatusFlow
+
     override fun getMessages(): Flow<List<ChatMessage>> = messagesFlow
     
     override fun connect() {
         Log.d(TAG, "Connecting to PieSocket...")
         try {
+            _connectionStatus.value = ConnectionStatus.Connecting
+
             val options = PieSocketOptions().apply {
                 clusterId = CLUSTER_ID
                 apiKey = API_KEY
@@ -68,6 +75,7 @@ class PieSocketWebSocketRepository @Inject constructor(
             setupEventListeners()
             
         } catch (e: Exception) {
+            _connectionStatus.value = ConnectionStatus.Error
         }
     }
     
@@ -76,7 +84,9 @@ class PieSocketWebSocketRepository @Inject constructor(
             channel?.disconnect()
             pieSocket = null
             channel = null
+            _connectionStatus.value = ConnectionStatus.Disconnected
         } catch (e: Exception) {
+            _connectionStatus.value = ConnectionStatus.Error
         }
     }
     
@@ -101,13 +111,15 @@ class PieSocketWebSocketRepository @Inject constructor(
     }
     
     override fun isConnected(): Boolean {
-        return true
+        return _connectionStatus.value == ConnectionStatus.Connected
     }
     
     private fun setupEventListeners() {
         channel?.let { ch ->
             ch.listen("system:connected", object : PieSocketEventListener() {
                 override fun handleEvent(event: PieSocketEvent) {
+                    _connectionStatus.value = ConnectionStatus.Connected
+
                     val newMessage = PieSocketEvent("new-message")
                     newMessage.setData("Hello!")
 
@@ -117,6 +129,7 @@ class PieSocketWebSocketRepository @Inject constructor(
             
             ch.listen("system:disconnected", object : PieSocketEventListener() {
                 override fun handleEvent(event: PieSocketEvent) {
+                    _connectionStatus.value = ConnectionStatus.Disconnected
                 }
             })
             
