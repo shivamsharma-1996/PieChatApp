@@ -20,20 +20,39 @@ class ConversationRepositoryImpl @Inject constructor() : ConversationRepository 
     override fun addMessage(message: ChatMessage) {
         val currentConversations = _conversations.value.toMutableList()
 
-        val newConversation = Conversation(
-            userName = message.userName,
-            lastMessage = message.message,
-            lastMessageTimestamp = message.timestamp,
-            unreadCount = 1,
-            messages = listOf(message)
-        )
+        val existingConversationIndex = currentConversations.indexOfFirst {
+            it.userName == message.userName
+        }
 
-        currentConversations.add(newConversation)
+        if (existingConversationIndex != -1) {
+            val existingConversation = currentConversations[existingConversationIndex]
+            val updatedMessages = existingConversation.messages + message
+
+            val updatedConversation = existingConversation.copy(
+                lastMessage = message.message,
+                lastMessageTimestamp = message.timestamp,
+                unreadCount = existingConversation.unreadCount + 1,
+                messages = updatedMessages
+            )
+
+            currentConversations[existingConversationIndex] = updatedConversation
+        } else {
+            val newConversation = Conversation(
+                userName = message.userName,
+                lastMessage = message.message,
+                lastMessageTimestamp = message.timestamp,
+                unreadCount = 1,
+                messages = listOf(message)
+            )
+
+            currentConversations.add(newConversation)
+        }
 
         _conversations.value = currentConversations
     }
 
     override fun markConversationAsRead(userName: String) {
         TODO("Not yet implemented")
+
     }
 }
