@@ -5,6 +5,12 @@ import com.piesocket.channels.PieSocket
 import com.piesocket.channels.misc.PieSocketEvent
 import com.piesocket.channels.misc.PieSocketEventListener
 import com.piesocket.channels.misc.PieSocketOptions
+import com.shivam.piechatapp.Constants
+import com.shivam.piechatapp.domain.model.ChatMessage
+import com.shivam.piechatapp.domain.model.ConnectionStatus
+import com.shivam.piechatapp.domain.repository.ConversationRepository
+import com.shivam.piechatapp.domain.repository.WebSocketRepository
+import com.shivam.piechatapp.utils.Logger
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -12,20 +18,12 @@ import kotlinx.coroutines.flow.asStateFlow
 import org.json.JSONObject
 import java.util.Date
 import java.util.UUID
-import android.util.Log
-import com.shivam.piechatapp.Constants
-import com.shivam.piechatapp.domain.model.ChatMessage
-import com.shivam.piechatapp.domain.model.ConnectionStatus
-import com.shivam.piechatapp.domain.repository.ConversationRepository
-import com.shivam.piechatapp.domain.repository.WebSocketRepository
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlin.apply
-import kotlin.collections.toMutableList
-import kotlin.let
 
 @Singleton
 class PieSocketWebSocketRepository @Inject constructor(
+    private val logger: Logger,
     private val conversationRepository: ConversationRepository
 ) : WebSocketRepository {
     
@@ -50,7 +48,7 @@ class PieSocketWebSocketRepository @Inject constructor(
     override fun getMessages(): Flow<List<ChatMessage>> = messagesFlow
     
     override fun connect() {
-        Log.d(TAG, "Connecting to PieSocket...")
+        logger.d(TAG, "Connecting to PieSocket...")
         try {
             _connectionStatus.value = ConnectionStatus.Connecting
 
@@ -113,7 +111,7 @@ class PieSocketWebSocketRepository @Inject constructor(
         channel?.let { ch ->
             ch.listen("system:connected", object : PieSocketEventListener() {
                 override fun handleEvent(event: PieSocketEvent) {
-                    Log.d(TAG, "Connected to PieSocket Room: $event")
+                    logger.d(TAG, "Connected to PieSocket Room: $event")
 
                     _connectionStatus.value = ConnectionStatus.Connected
                 }
@@ -121,6 +119,8 @@ class PieSocketWebSocketRepository @Inject constructor(
             
             ch.listen("system:disconnected", object : PieSocketEventListener() {
                 override fun handleEvent(event: PieSocketEvent) {
+                    logger.d(TAG, "Disconnected to PieSocket Room: $event")
+
                     _connectionStatus.value = ConnectionStatus.Disconnected
                 }
             })

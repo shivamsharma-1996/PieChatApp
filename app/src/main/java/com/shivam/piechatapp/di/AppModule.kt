@@ -6,6 +6,8 @@ import com.shivam.piechatapp.domain.repository.ConversationRepository
 import com.shivam.piechatapp.domain.repository.WebSocketRepository
 import com.shivam.piechatapp.domain.service.messagequeue.MessageQueueService
 import com.shivam.piechatapp.domain.service.messagequeue.MessageQueueServiceImpl
+import com.shivam.piechatapp.utils.AndroidLogger
+import com.shivam.piechatapp.utils.Logger
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -33,4 +35,12 @@ abstract class AppModule {
     abstract fun bindMessageQueueService(
         messageQueueServiceImpl: MessageQueueServiceImpl
     ): MessageQueueService
+
+    @Module
+    @InstallIn(SingletonComponent::class)
+    abstract class LoggerModule {
+        @Binds
+        @Singleton
+        abstract fun bindLogger(androidLogger: AndroidLogger): Logger
+    }
 } 

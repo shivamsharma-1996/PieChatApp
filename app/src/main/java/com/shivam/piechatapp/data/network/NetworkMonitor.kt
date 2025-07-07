@@ -1,11 +1,11 @@
 package com.shivam.piechatapp.data.network
 
-import android.util.Log
 import com.shivam.piechatapp.data.handler.MessageHandler
 import com.shivam.piechatapp.data.manager.QueueSimulationManager
 import com.shivam.piechatapp.data.repository.PieSocketWebSocketRepository
 import com.shivam.piechatapp.domain.model.ConnectionStatus
 import com.shivam.piechatapp.presentation.ui.components.alerts.network.NetworkAlertManager
+import com.shivam.piechatapp.utils.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
@@ -16,6 +16,7 @@ import javax.inject.Singleton
 // Encapsulates the network monitoring
 @Singleton
 class NetworkMonitor @Inject constructor(
+    private val logger: Logger,
     private val networkStatusManager: NetworkStatusManager,
     private val messageHandler: MessageHandler,
     private val socketRepository: PieSocketWebSocketRepository,
@@ -48,7 +49,7 @@ class NetworkMonitor @Inject constructor(
 
             if (status == ConnectionStatus.Connected && !queueMode && messageHandler.hasQueuedMessages()) {
                 // Process queued messages when socket connects and not in queue mode
-                Log.d("PieSocketWebSocketRepository", "Socket connected - processing queued messages")
+                logger.d(message = "Socket connected - processing queued messages")
                 messageHandler.processQueuedMessages()
             }
         }

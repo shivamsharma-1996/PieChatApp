@@ -1,6 +1,5 @@
 package com.shivam.piechatapp.presentation.ui.screens.convesation
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.shivam.piechatapp.domain.model.ConnectionStatus
@@ -29,13 +28,8 @@ class ConversationsViewModel @Inject constructor(
     val networkAlertState: StateFlow<NetworkAlertState> = networkAlertManager.alertState
 
     init {
-        Log.d("ConversationsViewModel", "ViewModel initialized")
         observeConversations()
         observeConnectionStatus()
-    }
-
-    companion object {
-        private const val TAG = "ConversationsViewModel"
     }
 
     private fun observeConversations() {

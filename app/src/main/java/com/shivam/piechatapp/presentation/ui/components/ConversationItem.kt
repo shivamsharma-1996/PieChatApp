@@ -25,10 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.shivam.piechatapp.domain.model.Conversation
-import com.shivam.utils.format
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+import com.shivam.piechatapp.utils.format
 
 @Composable
 fun ConversationItem(
