@@ -1,18 +1,24 @@
-**PieChatApp** is a chat application built for Android that supports real-time communication with **Offline functionality**. 
+💬 **PieChatApp**
+
+PieChatApp is an Android chat application that supports real-time messaging via sockets along with offline message queuing functionality.
 
 ---
 
 📱 Download APK
 
-[APK Link](https://github.com/shivamsharma-1996/PieChatApp/raw/main/apk/pie-chat-app.apk)
+Click below to install the app on your Android device:
 
----
-🔗 Project Demo
-
-[Demo Link](https://drive.google.com/file/d/132D9aZTMvDWpxxNtKeGnaR_g9GFZmGru/view)
+🔗 [Download APK](https://github.com/shivamsharma-1996/PieChatApp/raw/main/apk/pie-chat-app.apk)
 
 ---
 
+🎥 Project Demo
+
+Watch the demo video for a walkthrough of the project and its features:
+
+▶️ [View Demo Video](https://drive.google.com/file/d/132D9aZTMvDWpxxNtKeGnaR_g9GFZmGru/view)
+
+---
 ## ✨ Features
 
 💬 Real-Time Messaging: Socket-based communication using [PieHost-android-client](https://piehost.com/docs/3.0/android-websocket)
