@@ -84,11 +84,11 @@ https://github.com/shivamsharma-1996/PieChatApp/raw/main/apk/pie-chat-app.apk
  ---
 ## 📱 Usage
 **Online Mode**
-1. Connect both Android-client and [PieHost Web client](https://piehost.com/websocket-tester) to the same websocket URL.
-2. Initiate the conversation from Web. Checkout the valid payload structure in this doc below.
-3. Chat list displays all conversations
+1. Connect both the Android client and [PieHost Web client](https://piehost.com/websocket-tester) to the same websocket URL - `wss://s14881.blr1.piesocket.com/v3/chat-shivam?api_key=XuGHlUqVmqBDlHxSP9Sn5hXKGCD6DohwYe62IxE9&user=some_user_name`. Here, "chat-shivam" is the room-id that the Android client uses to establish the socket connection.
+2. Initiate the conversation from the Web client. You can find the valid **payload structure** at the end of the documentation below.
+3. The conversations page displays all available conversations with latest received message as a preview.
 4. Tap on any chat to view/send messages
-5. Messages are sent in real-time via socket connection
+5. Messages are exchanged in real-time over the socket connection.
 
 **Offline Mode**
 1. When network is unavailable, messages are queued locally
