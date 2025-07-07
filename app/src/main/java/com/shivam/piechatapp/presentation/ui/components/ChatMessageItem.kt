@@ -15,7 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.shivam.piechatapp.domain.model.ChatMessage
 import com.shivam.piechatapp.domain.model.MessageStatus
-import com.shivam.utils.format
+import com.shivam.piechatapp.utils.format
 
 @Composable
 fun ChatMessageItem(

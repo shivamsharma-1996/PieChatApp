@@ -27,9 +27,9 @@ fun PieChatNavigation(
             )
         }
         composable(Screen.Chat.route) { backStackEntry ->
-            val userName = backStackEntry.arguments?.getString(Constants.KEY_CONVO_PARTNER_NAME) ?: "Unknown"
+            val partnerName = backStackEntry.arguments?.getString(Constants.KEY_CONVO_PARTNER_NAME) ?: "Unknown"
             ChatScreen(
-                userName = userName,
+                partnerName = partnerName,
                 onBackClick = { navController.popBackStack() }
             )
         }

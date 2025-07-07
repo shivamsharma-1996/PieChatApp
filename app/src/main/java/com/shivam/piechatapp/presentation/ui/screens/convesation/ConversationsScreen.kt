@@ -3,6 +3,7 @@ package com.shivam.piechatapp.presentation.ui.screens.convesation
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -29,7 +30,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.shivam.piechatapp.domain.model.ConnectionStatus
 import com.shivam.piechatapp.presentation.ui.components.AppTopBar
 import com.shivam.piechatapp.presentation.ui.components.ConversationItem
+import com.shivam.piechatapp.presentation.ui.components.CustomSnackbar
 import com.shivam.piechatapp.presentation.ui.components.alerts.network.NetworkAlert
+import com.shivam.piechatapp.utils.showErrorSnackbar
+import com.shivam.piechatapp.utils.showSuccessSnackbar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -47,13 +51,13 @@ fun ConversationsScreen(
                 snackbarHostState.showSnackbar("Making a connection, please wait...")
             }
             is ConnectionStatus.Connected -> {
-                snackbarHostState.showSnackbar("Connected to chat server")
+                snackbarHostState.showSuccessSnackbar("Connected to chat server")
             }
             is ConnectionStatus.Disconnected -> {
-                snackbarHostState.showSnackbar("Lost connection to chat server")
+                snackbarHostState.showErrorSnackbar("Lost connection to chat server")
             }
             is ConnectionStatus.Error -> {
-                snackbarHostState.showSnackbar("Connection error. Please check your internet.")
+                snackbarHostState.showErrorSnackbar("Connection error. Please check your internet.")
             }
         }
     }
@@ -62,7 +66,14 @@ fun ConversationsScreen(
         topBar = {
             AppTopBar(title = "Conversations")
         },
-        snackbarHost = { SnackbarHost(snackbarHostState) },
+        snackbarHost = {
+            SnackbarHost(
+                hostState = snackbarHostState,
+                snackbar = { snackbarData ->
+                    CustomSnackbar(snackbarData = snackbarData)
+                }
+            )
+        },
         modifier = Modifier.fillMaxSize()
     ) { innerPadding ->
         Box(
@@ -113,6 +124,13 @@ fun ConversationsScreen(
                                 Text(
                                     text = "No conversations available",
                                     style = MaterialTheme.typography.headlineSmall,
+                                    textAlign = TextAlign.Center,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                                Spacer(modifier = Modifier.padding(8.dp))
+                                Text(
+                                    text = "Start conversation from PieHost Web tester",
+                                    style = MaterialTheme.typography.bodyMedium,
                                     textAlign = TextAlign.Center,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )

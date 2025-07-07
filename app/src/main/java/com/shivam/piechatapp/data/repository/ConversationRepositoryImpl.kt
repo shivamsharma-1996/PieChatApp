@@ -61,6 +61,9 @@ class ConversationRepositoryImpl @Inject constructor() : ConversationRepository 
             currentConversations.add(newConversation)
         }
 
+        // Sort conversations by latest message timestamp
+        currentConversations.sortByDescending { it.lastMessageTimestamp }
+
         _conversations.value = currentConversations
     }
 

@@ -18,53 +18,61 @@ class MessageHandler @Inject constructor(
     private val networkAlertManager: NetworkAlertManager,
     private val queueSimulationManager: QueueSimulationManager
 ) {
-    
+
     fun sendMessage(message: ChatMessage): ChatMessage {
         val queueMode = queueSimulationManager.queueMode.value
 
         // Check both internet connectivity and socket connection
         val canSend = networkStatusManager.isNetworkAvailableNow() && socketRepository.isConnected()
 
-        return if (queueMode) {
-            // Always queue in simulation mode
-            messageQueueService.queueMessage(message)
-            networkAlertManager.showMessageQueuedAlert()
-            networkAlertManager.clearAlertAfterDelay(3000) {
-                if (!networkStatusManager.isNetworkAvailableNow()) {
-                    networkAlertManager.showNoInternetAlert()
-                }
+        return when {
+            queueMode -> {
+                // Always queue in simulation mode
+                queueAndNotify(message)
             }
-            message.copy(status = MessageStatus.QUEUED)
-        } else if (canSend) {
-            val result = socketRepository.sendMessage(message) // Try to send immediately
-            if (result.isSuccess) {
-                message.copy(status = MessageStatus.SENT)
-            } else {
-                messageQueueService.queueMessage(message) // If sending fails, queue the message
-                message.copy(status = MessageStatus.QUEUED)
-            }
-        } else {
-            messageQueueService.queueMessage(message) // Queue the message if conditions are not met
 
-            networkAlertManager.showMessageQueuedAlert()
-            networkAlertManager.clearAlertAfterDelay(3000) {
-                if (!networkStatusManager.isNetworkAvailableNow()) {
-                    networkAlertManager.showNoInternetAlert()
+            canSend -> {
+                val result = socketRepository.sendMessage(message) // Try to send immediately
+                if (result.isSuccess) {
+                    message.copy(status = MessageStatus.SENT)
+                } else {
+                    // If sending fails, queue the message
+                    queueAndNotify(message)
                 }
             }
 
-            message.copy(status = MessageStatus.QUEUED)
+            else -> {
+                // Queue the message if conditions are not met
+                queueAndNotify(message)
+            }
         }
     }
-    
+
     fun processQueuedMessages() {
         val queueMode = queueSimulationManager.queueMode.value
         if (!queueMode && networkStatusManager.isNetworkAvailableNow() && socketRepository.isConnected()) {
+            // Process queued messages when socket is connected and internet is available
             messageQueueService.processQueue()
         }
     }
 
     fun hasQueuedMessages(): Boolean {
         return messageQueueService.hasQueuedMessages()
+    }
+
+    private fun queueAndNotify(message: ChatMessage): ChatMessage {
+        messageQueueService.queueMessage(message)
+
+        // Show alert for queued message
+        networkAlertManager.showMessageQueuedAlert()
+
+        // Clear alert after delay, but if still offline, show no internet alert
+        networkAlertManager.clearAlertAfterDelay(3000) {
+            if (!networkStatusManager.isNetworkAvailableNow()) {
+                networkAlertManager.showNoInternetAlert()
+            }
+        }
+
+        return message.copy(status = MessageStatus.QUEUED)
     }
 }
