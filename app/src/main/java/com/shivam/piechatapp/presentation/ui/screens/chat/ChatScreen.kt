@@ -43,7 +43,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatScreen(
-    userName: String,
+    partnerName: String,
     onBackClick: () -> Unit,
     viewModel: ChatViewModel = hiltViewModel()
 ) {
@@ -59,13 +59,14 @@ fun ChatScreen(
     LaunchedEffect(messages.size) {
         if (messages.isNotEmpty()) {
             listState.animateScrollToItem(messages.lastIndex)
+            viewModel.markConversationAsRead(partnerName)
         }
     }
 
     Scaffold(
         topBar = {
             AppTopBar(
-                title = userName,
+                title = partnerName,
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(

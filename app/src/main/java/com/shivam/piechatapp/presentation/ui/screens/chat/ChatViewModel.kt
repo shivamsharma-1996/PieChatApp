@@ -24,7 +24,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ChatViewModel @Inject constructor(
     private val sendMessageUseCase: SendMessageUseCase,
-    conversationRepository: ConversationRepository,
+    private val conversationRepository: ConversationRepository,
     networkAlertManager: NetworkAlertManager,
     private val networkStatusManager: NetworkStatusManager,
     private val savedStateHandle: SavedStateHandle,
@@ -78,5 +78,9 @@ class ChatViewModel @Inject constructor(
                 messageHandler.processQueuedMessages()
             }
         }
+    }
+
+    fun markConversationAsRead(partnerName: String) {
+        conversationRepository.markConversationAsRead(partnerName)
     }
 }
