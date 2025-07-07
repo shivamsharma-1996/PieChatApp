@@ -2,6 +2,11 @@
 
 ---
 
+📱 Download APK
+
+https://github.com/shivamsharma-1996/PieChatApp/raw/main/apk/pie-chat-app.apk
+
+---
 ## ✨ Features
 
 💬 Real-Time Messaging: Socket-based communication using [PieHost-android-client](https://piehost.com/docs/3.0/android-websocket)
