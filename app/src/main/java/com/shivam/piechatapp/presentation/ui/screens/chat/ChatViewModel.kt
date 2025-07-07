@@ -25,7 +25,7 @@ import javax.inject.Inject
 class ChatViewModel @Inject constructor(
     private val sendMessageUseCase: SendMessageUseCase,
     private val conversationRepository: ConversationRepository,
-    networkAlertManager: NetworkAlertManager,
+    private val networkAlertManager: NetworkAlertManager,
     private val networkStatusManager: NetworkStatusManager,
     private val savedStateHandle: SavedStateHandle,
     private val queueSimulationManager: QueueSimulationManager,
@@ -75,6 +75,13 @@ class ChatViewModel @Inject constructor(
         if (!enabled) {
             // If queue mode is turned off, try to process queued messages
             if (networkStatusManager.isNetworkAvailableNow() && socketRepository.isConnected()) {
+                // show alerts and then clear after 3 sec delay
+                networkAlertManager.showBackOnlineAlert(
+                    messageHandler.hasQueuedMessages(),
+                    false
+                )
+                networkAlertManager.clearAlertAfterDelay()
+
                 messageHandler.processQueuedMessages()
             }
         }
