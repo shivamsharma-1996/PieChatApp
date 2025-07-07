@@ -46,19 +46,6 @@ https://github.com/shivamsharma-1996/PieChatApp/raw/main/apk/pie-chat-app.apk
 
 ---
 
-## 🔧 Tech Stack & Dependencies
-
-- **Language:** Kotlin
-- **Architecture:** MVVM + Clean Architecture + SOLID Principles
-- **UI:** Jetpack Compose, Material Design Components
-- **Real-Time Communication:** Socket.IO
-- **Async Operations:** Kotlin Coroutines + Flow
-- **DI:** Dagger-hilt
-- **Other Libraries:** Navigation-compose
----
-
-
-
 ## 📌 Tasks & Pull Requests
 
 | Task Name                              | Pull Request Title                                                                 |
@@ -77,6 +64,19 @@ https://github.com/shivamsharma-1996/PieChatApp/raw/main/apk/pie-chat-app.apk
 
 
 ---
+
+## 🔧 Tech Stack & Dependencies
+
+- **Language:** Kotlin
+- **Architecture:** MVVM + Clean Architecture + SOLID Principles
+- **UI:** Jetpack Compose, Material Design Components
+- **Real-Time Communication:** Socket.IO
+- **Async Operations:** Kotlin Coroutines + Flow
+- **DI:** Dagger-hilt
+- **Other Libraries:** Navigation-compose
+---
+
+
 ## Setup
 
  Signup on PieHost [dashboard](https://piehost.com/). Create a free PieSocket project which will provide a websocket URL. Both Android and web client will connect to the same websocket URL with same room-id. 
