@@ -7,9 +7,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
@@ -21,10 +23,12 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -34,6 +38,7 @@ import com.shivam.piechatapp.presentation.ui.components.ChatMessageItem
 import com.shivam.piechatapp.presentation.ui.components.QueueModeToggle
 import com.shivam.piechatapp.presentation.ui.components.alerts.network.NetworkAlert
 import com.shivam.piechatapp.presentation.ui.components.alerts.network.NetworkAlertState
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -46,6 +51,16 @@ fun ChatScreen(
     val messages by viewModel.messages.collectAsState(emptyList())
     val networkAlertState by viewModel.networkAlertState.collectAsState(NetworkAlertState.Hidden)
     val queueMode by viewModel.queueMode.collectAsState()
+
+    val listState = rememberLazyListState()
+    val coroutineScope = rememberCoroutineScope()
+
+    // Always scroll to bottom when messages change
+    LaunchedEffect(messages.size) {
+        if (messages.isNotEmpty()) {
+            listState.animateScrollToItem(messages.lastIndex)
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -69,7 +84,7 @@ fun ChatScreen(
                 .padding(innerPadding)
         ) {
             Column(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.fillMaxSize().imePadding(),
                 verticalArrangement = Arrangement.Bottom
             ) {
                 NetworkAlert(
@@ -80,6 +95,7 @@ fun ChatScreen(
                 Divider()
 
                 LazyColumn(
+                    state = listState,
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxWidth()
@@ -109,6 +125,12 @@ fun ChatScreen(
                         onClick = {
                             viewModel.sendMessage(message)
                             setMessage("")
+
+                            coroutineScope.launch {
+                                if (messages.isNotEmpty()) {
+                                    listState.animateScrollToItem(messages.lastIndex)
+                                }
+                            }
                         },
                         enabled = message.isNotBlank()
                     ) {
