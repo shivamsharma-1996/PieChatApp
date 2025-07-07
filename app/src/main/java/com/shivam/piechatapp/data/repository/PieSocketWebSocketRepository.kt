@@ -117,7 +117,7 @@ class PieSocketWebSocketRepository @Inject constructor(
                 }
             })
             
-            ch.listen("system:disconnected", object : PieSocketEventListener() {
+            ch.listen("system:error", object : PieSocketEventListener() {
                 override fun handleEvent(event: PieSocketEvent) {
                     logger.d(TAG, "Disconnected to PieSocket Room: $event")
 
