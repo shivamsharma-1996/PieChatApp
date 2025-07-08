@@ -82,7 +82,7 @@ Watch the demo video for a walkthrough of the project and its features:
 - **Language:** Kotlin
 - **Architecture:** MVVM + Clean Architecture + SOLID Principles
 - **UI:** Jetpack Compose, Material Design Components
-- **Real-Time Communication:** Socket.IO
+- **Real-Time Communication:** [PieSocket SDK](https://piehost.com/docs/3.0/android-websocket)
 - **Async Operations:** Kotlin Coroutines + Flow
 - **DI:** Dagger-hilt
 - **Other Libraries:** Navigation-compose
