@@ -33,7 +33,7 @@ Click below to install the app on your Android device:
 
 Watch the demo video for a walkthrough of the project and its features:
 
-▶️ [View Demo Video](https://drive.google.com/file/d/132D9aZTMvDWpxxNtKeGnaR_g9GFZmGru/view)
+https://github.com/user-attachments/assets/8c34505a-33d2-4cfc-8e1f-d46554147505
 
 ---
 
